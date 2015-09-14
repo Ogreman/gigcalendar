@@ -17,12 +17,19 @@ CALENDARS = {
 }
 
 
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
+# try:
+#     import argparse
+#     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+# except ImportError:
+#     flags = None
 
+
+class Flag(object):        
+    auth_host_name='localhost' 
+    auth_host_port=[8080, 8090] 
+    logging_level='ERROR' 
+    noauth_local_webserver=True
+flags = Flag()
 
 
 def get_credentials():

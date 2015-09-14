@@ -20,6 +20,11 @@ event = {
 }
 
 
+@app.route("/")
+def index():
+    return ''
+
+
 @app.route("/create", methods=['POST'])
 def create():
     if request.form['token'] in APP_TOKENS:

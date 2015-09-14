@@ -38,7 +38,7 @@ def create():
                 return "Notts calendar not yet ready."
             try:
                 return "Gig added! <{result}|Click here> for details!".format(
-                    result=create_event(calendar, event)
+                    result=create_event(app.google_credentials, calendar, event)
                 )
             except HttpError as e:
                 print e
@@ -55,7 +55,7 @@ def list():
             return "Error - requires two values (calendar name and date)"
         if calendar.lower() in ['bristol', 'notts']:
             try:
-                events = list_events(calendar, date)
+                events = list_events(app.google_credentials, calendar, date)
                 return '\n'.join(
                     [
                         "{0}, {1}".format(event['start'].get('dateTime', event['start'].get('date')), event['summary'])

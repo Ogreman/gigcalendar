@@ -5,6 +5,7 @@ from oauth2client import tools
 from apiclient import discovery
 import httplib2
 
+
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Gigs Calendar'
@@ -81,7 +82,7 @@ def create_event(credentials, calendar, event):
 
 def list_events(credentials, calendar, date):
     http = credentials.authorize(httplib2.Http())
-    service = discovery.build('calendar', 'v3', http=http, developerKey=API_KEY)
+    service = discovery.build('calendar', 'v3', http=http)
 
     start = '{date}T00:00:00+01:00'.format(date=date.strip())
     end = '{date}T23:59:59+01:00'.format(date=date.strip())

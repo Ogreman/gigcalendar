@@ -3,7 +3,7 @@
 Installation
 ------------
 
-Recommend using virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
+Recommend using [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/).
 
     $ git clone git@github.com:Ogreman/gigcalendar.git
     $ cd gigcalendar

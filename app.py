@@ -1,7 +1,12 @@
 import os
+import logging
 from utils import create_event, get_credentials, list_events
 from flask import Flask, request, jsonify
 from apiclient.http import HttpError
+
+FORMAT = "%(asctime)-15s: %(levelname)s: %(message)s"
+logging.basicConfig(format=FORMAT, filename="gigs.log", level=logging.INFO)
+
 
 app = Flask(__name__)
 app.google_credentials = get_credentials()
@@ -27,15 +32,16 @@ event = {
 
 @app.route("/")
 def index():
-    return ''
+    return 'doom'
 
 
 @app.route("/create", methods=['POST'])
 def create():
-    if request.form['token'] in APP_TOKENS:
+    if request.form.get('token') in APP_TOKENS:
         try:
             calendar, event['summary'], event['start']['date'], event['end']['date'] = request.form['text'].split(',')
-        except ValueError:
+        except (ValueError, KeyError) as e:
+            logging.exception(str(e))
             return "Error - requires three values"
         if calendar.lower() in ['bristol', 'notts']:
             try:
@@ -43,30 +49,39 @@ def create():
                     result=create_event(app.google_credentials, calendar, event)
                 )
             except HttpError as e:
-                print e
+                logging.exception(str(e))
                 return "Failed to add gig :( Check calendar permissions."
+    else:
+        logging.error("invalid token: %s", request.form.get('token'))
     return "Nope :|"
 
 
 @app.route("/list", methods=['POST'])
 def list():
-    if request.form['token'] in APP_TOKENS:
+    if request.form.get('token') in APP_TOKENS:
         try:
             calendar, date = request.form['text'].split(',')
-        except ValueError:
+        except (ValueError, KeyError) as e:
+            logging.exception(str(e))
             return "Error - requires two values (calendar name and date)"
         if calendar.lower() in ['bristol', 'notts']:
             try:
                 events = list_events(app.google_credentials, calendar, date)
                 return '\n'.join(
                     [
-                        "{0}, {1}".format(event['start'].get('dateTime', event['start'].get('date')), event['summary'])
+                        "{0}, {1}"
+                        .format(
+                            event['start'].get(get('date')), 
+                            event['summary']
+                        )
                         for event in events
                     ]
                 ) or 'No events!'
             except HttpError as e:
-                print e
+                logging.exception(str(e))
                 return "Failed to list gigs :( Check calendar permissions."
+    else:
+        logging.error("invalid token: %s", request.form.get('token'))
     return "Nope :|"
 
 

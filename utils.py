@@ -1,4 +1,5 @@
 import os
+import datetime
 import oauth2client
 from oauth2client import client
 from oauth2client import tools
@@ -92,6 +93,8 @@ def sort_string(val):
         if len(parts[2]) > 2:
             parts.reverse()
             val = '-'.join(parts)
+    elif val == 'today':
+        val = datetime.date.today().isoformat()
     return val
 
 

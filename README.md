@@ -12,6 +12,15 @@ Recommend using [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/
 Get google secret file from [developer console](https://console.developers.google.com/).
 
 
+Usage
+-----
+
+To run the webserver locally on port 5000:
+
+    $ cd gigcalendar
+    $ python app.py
+
+
 Environment Variables & Virtual Environments
 --------------------------------------------
 

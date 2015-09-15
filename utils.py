@@ -6,15 +6,13 @@ from apiclient import discovery
 import httplib2
 
 
-SCOPES = 'https://www.googleapis.com/auth/calendar'
-CLIENT_SECRET_FILE = 'client_secret.json'
+SCOPES = os.environ.get('GOOGLE_SCOPE')
+CLIENT_SECRET_FILE = os.environ.get('GOOGLE_SECRET_FILE')
 APPLICATION_NAME = 'Gigs Calendar'
-API_KEY = 'AIzaSyDtBGVFvMk3LRxPytNmB2z0gTUs4d077Qw'
-
-
 CALENDARS = {
-    'bristol': '8bog3m0l9cfgt48cbk3lgdk8o0@group.calendar.google.com',
-    'notts': '1gghroldtmjh8mvuo63s33r2uk@group.calendar.google.com',
+    key.split('_')[0].lower(): value
+    for key, value in os.environ.items()
+    if key.endswith('_CALENDAR')
 }
 
 
@@ -64,7 +62,7 @@ def get_credentials():
 
 def create_event(credentials, calendar, event):
     http = credentials.authorize(httplib2.Http())
-    service = discovery.build('calendar', 'v3', http=http, developerKey=API_KEY)
+    service = discovery.build('calendar', 'v3', http=http)
 
     for k, v in event.items():
         if isinstance(v, dict):

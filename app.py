@@ -32,10 +32,7 @@ def create():
             calendar, event['summary'], event['start']['date'], event['end']['date'] = request.form['text'].split(',')
         except ValueError:
             return "Error - requires three values"
-        
         if calendar.lower() in ['bristol', 'notts']:
-            if calendar.lower() == 'notts':
-                return "Notts calendar not yet ready."
             try:
                 return "Gig added! <{result}|Click here> for details!".format(
                     result=create_event(app.google_credentials, calendar, event)
@@ -70,6 +67,6 @@ def list():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.environ.get('GIG_DEBUG', False))
 
 

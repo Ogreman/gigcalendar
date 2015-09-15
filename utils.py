@@ -63,14 +63,7 @@ def get_credentials():
 def create_event(credentials, calendar, event):
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
-
-    for k, v in event.items():
-        if isinstance(v, dict):
-            for kk, vv in v.items():
-                event[k][kk] = vv.strip()
-        else:
-            event[k] = v.strip()
-
+    conform_dict(event, sort_string)
     eventsResult = service.events().insert(
         calendarId=CALENDARS[calendar.strip().lower()], 
         body=event
@@ -78,12 +71,37 @@ def create_event(credentials, calendar, event):
     return eventsResult.get('htmlLink')
 
 
+def conform_dict(d, func=str.strip):
+    for k, v in d.items():
+        if isinstance(v, dict):
+            for kk, vv in v.items():
+                d[k][kk] = func(vv)
+        else:
+            d[k] = func(v)
+
+
+def sort_string(val):
+    """Transforms a UK date (DD-MM-YYYY) string
+    to US (YYYY-MM-DD) for Google API.
+
+    Returns:
+        transormed and whitespace-stripped string"""
+    val = val.strip()
+    if '-' in val:
+        parts = val.split('-')
+        if len(parts[2]) > 2:
+            parts.reverse()
+            val = '-'.join(parts)
+    return val
+
+
 def list_events(credentials, calendar, date):
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
+    date = sort_string(date)
 
-    start = '{date}T00:00:00+01:00'.format(date=date.strip())
-    end = '{date}T23:59:59+01:00'.format(date=date.strip())
+    start = '{date}T00:00:00+01:00'.format(date=date)
+    end = '{date}T23:59:59+01:00'.format(date=date)
 
     eventsResult = service.events().list(
         calendarId=CALENDARS[calendar.strip().lower()], 

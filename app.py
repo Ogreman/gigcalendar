@@ -7,7 +7,11 @@ app = Flask(__name__)
 app.google_credentials = get_credentials()
 
 
-APP_TOKENS = ["9u4Vj53UwTsSDxBxSPHkrTfJ", "nO5v58iT7qKgXJTqXc3zSEYt"]
+APP_TOKENS = [
+    val
+    for key, val in os.environ.items()
+    if key.startswith('APP_TOKEN')
+]
 
 
 event = {

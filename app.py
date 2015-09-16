@@ -1,6 +1,6 @@
 import os
 import logging
-from utils import create_event, get_credentials, list_events
+from utils import create_event, get_credentials, list_events, quick_create_event
 from flask import Flask, request, jsonify
 from apiclient.http import HttpError
 
@@ -39,14 +39,18 @@ def index():
 def create():
     if request.form.get('token') in APP_TOKENS:
         try:
-            calendar, event['summary'], event['start']['date'], event['end']['date'] = request.form['text'].split(',')
+            calendar, text = request.form['text'].split(',')
         except (ValueError, KeyError) as e:
             logging.exception(str(e))
-            return "Error - requires three values"
+            return "Error - requires two values (calendar and text)"
         if calendar.lower() in ['bristol', 'notts']:
             try:
                 return "Gig added! <{result}|Click here> for details!".format(
-                    result=create_event(app.google_credentials, calendar, event)
+                    result=quick_create_event(
+                        app.google_credentials, 
+                        calendar, 
+                        text
+                    )
                 )
             except HttpError as e:
                 logging.exception(str(e))

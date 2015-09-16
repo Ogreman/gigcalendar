@@ -61,6 +61,16 @@ def get_credentials():
     return credentials
 
 
+def quick_create_event(credentials, calendar, text):
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('calendar', 'v3', http=http)
+    eventsResult = service.events().quickAdd(
+        calendarId=CALENDARS[calendar.strip().lower()], 
+        text=text
+    ).execute()
+    return eventsResult.get('htmlLink')
+
+
 def create_event(credentials, calendar, event):
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)

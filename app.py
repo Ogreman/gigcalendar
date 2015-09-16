@@ -91,6 +91,6 @@ def list():
 
 
 if __name__ == "__main__":
-    app.run(debug=os.environ.get('GIG_DEBUG', False))
+    app.run(host='0.0.0.0', port=80, debug=os.environ.get('GIG_DEBUG', False))
 
 

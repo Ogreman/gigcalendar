@@ -73,10 +73,11 @@ def list():
                 events = list_events(app.google_credentials, calendar, date)
                 return '\n'.join(
                     [
-                        "{0}, {1}"
+                        "<{0}|{1} @ {2}>"
                         .format(
-                            event['start'].get('date'), 
-                            event['summary']
+                            event.get('htmlLink'),
+                            event['summary'],
+                            event.get('location', calendar.title())
                         )
                         for event in events
                     ]

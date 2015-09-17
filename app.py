@@ -75,7 +75,7 @@ def list():
                     [
                         "{0}, {1}"
                         .format(
-                            event['start'].get(get('date')), 
+                            event['start'].get('date'), 
                             event['summary']
                         )
                         for event in events

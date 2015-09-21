@@ -105,6 +105,10 @@ def sort_string(val):
             val = '-'.join(parts)
     elif val == 'today':
         val = datetime.date.today().isoformat()
+    elif val == 'tomorrow':
+        val = (datetime.date.today() + datetime.timedelta(days=1)).isoformat()
+    elif val == 'yesterday':
+        val = (datetime.date.today() + datetime.timedelta(days=-1)).isoformat()
     return val
 
 

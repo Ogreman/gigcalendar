@@ -61,6 +61,31 @@ def list_gigs(calendar, date):
         return "Failed to list gigs :( Check calendar permissions."
 
 
+def help_gig():
+    return """
+    Usage: /gig COMMAND [CALENDAR], [ARGS]...
+
+    Commands:
+      add        Adds a gig to a given calendar.
+      list       Lists all gigs for a given calendar and date.
+      help       Outputs this help text.
+    
+    Calendars:
+      bristol
+      notts
+
+    Examples:
+      add example usage:
+        /gig add bristol, A Band at A Location on 1st of January 6pm-8pm
+      list example usage:
+        /gig list notts, tomorrow
+        /gig list bristol, today
+        /gig list notts, yesterday
+        /gig list bristol, 13-12-2015
+        /gig list notts, 01-14-2015
+    """
+
+
 @app.route("/")
 def index():
     return 'doom'
@@ -76,6 +101,7 @@ def create():
         return {
             'add': add_gig,
             'list': list_gigs,
+            'help': help_gig,
         }[func_name]
 
     def get_fname(request):
@@ -85,6 +111,8 @@ def create():
         try:
             fname = get_fname(request)
             function = get_func(fname)
+            if fname == 'help':
+                return function()
             calendar, arg = get_args(request, fname)
             if calendar.lower() in CALENDARS:
                 return function(calendar, arg)
@@ -92,7 +120,7 @@ def create():
                 return "Invalid calendar"
         except (ValueError, KeyError) as e:
             logging.exception(str(e))
-            return "Error - requires three values ([option] [calendar], text)"
+            return "Error - expected: (command [calendar], [text])"
     else:
         logging.error("invalid token: %s", request.form.get('token'))
     return "Nope :|"
@@ -100,5 +128,4 @@ def create():
 
 if __name__ == "__main__":
     app.run(debug=os.environ.get('GIG_DEBUG', True))
-
 

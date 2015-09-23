@@ -63,26 +63,47 @@ def list_gigs(calendar, date):
 
 def help_gig():
     return """
-    Usage: /gig COMMAND [CALENDAR], [ARGS]...
+    Usage: /gig COMMAND [CALENDAR], [ARGUMENTS]...
 
     Commands:
+
       add        Adds a gig to a given calendar.
       list       Lists all gigs for a given calendar and date.
       help       Outputs this help text.
     
     Calendars:
+
       bristol
       notts
 
     Examples:
+      
       add example usage:
         /gig add bristol, A Band at A Location on 1st of January 6pm-8pm
+      
       list example usage:
-        /gig list notts, tomorrow
-        /gig list bristol, today
-        /gig list notts, yesterday
-        /gig list bristol, 13-12-2015
-        /gig list notts, 01-14-2015
+        /gig list notts, today
+
+    Arguments
+      
+      add 
+        
+        /gig add [calendar], [name] at [location] on [date] 
+
+        [calendar]      mandatory      see above for valid calendars
+        [name]          mandatory      title of event
+        [location]      optional       geographic location of the event
+        [date]          mandatory      date (with optional time) of event
+                                       e.g.: 01-01-2015, 1st of January,
+                                             1st of January 2017 10am-12pm,
+                                             tomorrow, today 8pm
+      list
+        
+        /gig list [calendar], [date]
+
+        [calendar]      mandatory      see above for valid calendars
+        [date]          mandatory      date to search for events (fewer options than add)
+                                       e.g.: 01-01-2015, today, tomorrow, yesterday
     """
 
 

@@ -17,15 +17,15 @@ APP_TOKENS = [
 ]
 CALENDARS = ['bristol', 'notts']
 
-event = {
-  'summary': 'Test',
-  'start': {
-    'date': '2015-09-14'
-  },
-  'end': {
-    'date': '2015-09-15'
-  }
-}
+# event = {
+#   'summary': 'Test',
+#   'start': {
+#     'date': '2015-09-14'
+#   },
+#   'end': {
+#     'date': '2015-09-15'
+#   }
+# }
 
 
 def add_gig(calendar, text):

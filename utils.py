@@ -97,7 +97,7 @@ def sort_string(val):
 
     Returns:
         transormed and whitespace-stripped string"""
-    val = val.strip()
+    val = val.strip().lower()
     if '-' in val:
         parts = val.split('-')
         if len(parts[2]) > 2:

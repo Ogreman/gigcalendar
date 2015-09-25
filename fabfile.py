@@ -10,7 +10,7 @@ def init_envs():
             try:
                 key, val = line.split('=')
                 key = key.split(' ')[1]
-                env[key] = val.replace('"', '')
+                env[key] = val.replace('"', '').strip()
             except (IndexError, ValueError):
                 pass
 

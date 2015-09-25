@@ -31,7 +31,8 @@ def push(branch="master"):
 def prepare(branch="_dummy"):
     with cd(env.REMOTE_PROJECT_PATH):
         run("git stash")
-        result = run("git checkout -b %s" % branch)
+        with settings(warn_only=True):
+            result = run("git checkout -b %s" % branch)
         if result.failed:
             run("git checkout %s" % branch)
 

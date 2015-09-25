@@ -28,16 +28,23 @@ def push(branch="master"):
     local("git push %s %s" % (env.hosts[0], branch))
 
 
-def prepare():
+def prepare(branch="_dummy"):
     with cd(env.REMOTE_PROJECT_PATH):
         run("git stash")
-        run("git checkout -b _dummy")
+        result = run("git checkout -b %s" % branch)
+        if result.failed:
+            run("git checkout %s" % branch)
 
 
 def finalise():
     with cd(env.REMOTE_PROJECT_PATH):
-        run("git branch -D _dummy")
         run("git stash pop")
+
+
+def clean(branch="_dummy"):
+    with cd(env.REMOTE_PROJECT_PATH):
+        with settings(warn_only=True):
+            run("git branch -D %s" % branch)
 
 
 def deploy(m):
@@ -45,5 +52,6 @@ def deploy(m):
     commit(m)
     prepare()
     push()
+    clean()
     finalise()
     start_app()

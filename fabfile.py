@@ -61,6 +61,6 @@ def deploy(m):
     kill()
     prepare()
     push()
-    clean()
     finalise()
+    clean()
     start_app()

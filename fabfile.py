@@ -15,7 +15,7 @@ def init_envs():
                 pass
 
 
-def start_app(path):
+def start_app():
     with settings(warn_only=True):
         run('nohup python %s/app.py &' % env.REMOTE_PROJECT_PATH)
 
@@ -37,8 +37,9 @@ def prepare(branch="_dummy"):
             run("git checkout %s" % branch)
 
 
-def finalise():
+def finalise(branch="master"):
     with cd(env.REMOTE_PROJECT_PATH):
+        run("git checkout %s" % branch)
         run("git stash pop")
 
 
@@ -48,9 +49,16 @@ def clean(branch="_dummy"):
             run("git branch -D %s" % branch)
 
 
+def kill():
+    pid = run("ps aux | grep gig | grep -v grep | awk '{print $2}'")
+    if pid:
+        run("kill %d" % int(pid))
+
+
 def deploy(m):
     init_envs()
     commit(m)
+    kill()
     prepare()
     push()
     clean()

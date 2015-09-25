@@ -3,21 +3,20 @@ from fabric.api import local, settings, run, env, cd
 env.use_ssh_config = True
 env.hosts = ['raffers']
 
-
-def init_envs():
-    with open('/home/james/.virtualenvs/gigcalendar/bin/postactivate', 'r') as pa:
-        for line in pa:
-            try:
-                key, val = line.split('=')
-                key = key.split(' ')[1]
-                env[key] = val.replace('"', '').strip()
-            except (IndexError, ValueError):
-                pass
+with open('/home/james/.virtualenvs/gigcalendar/bin/postactivate', 'r') as pa:
+    for line in pa:
+        try:
+            key, val = line.split('=')
+            key = key.split(' ')[1]
+            env[key] = val.replace('"', '').strip()
+        except (IndexError, ValueError):
+            pass
 
 
-def start_app():
+def start():
     with settings(warn_only=True):
-        run('nohup python %s/app.py &' % env.REMOTE_PROJECT_PATH)
+        with cd(env.REMOTE_PROJECT_PATH):
+            run('source postactivate && dtach -n `mktemp -u /tmp/dtach.XXXX` python %s/app.py' % env.REMOTE_PROJECT_PATH)
 
 
 def commit(words):
@@ -51,16 +50,21 @@ def clean(branch="_dummy"):
 
 def kill():
     pid = run("ps aux | grep gig | grep -v grep | awk '{print $2}'")
-    if pid:
-        run("kill %d" % int(pid))
+    for p in pid.split('\n'):
+        if p:
+            run("kill %d" % int(p))
+
+
+def logs():
+    with cd(env.REMOTE_PROJECT_PATH):
+        return run("tail gigs.log")
 
 
 def deploy(m):
-    init_envs()
     commit(m)
     kill()
     prepare()
     push()
     finalise()
     clean()
-    start_app()
+    start()

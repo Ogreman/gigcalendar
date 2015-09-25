@@ -86,6 +86,11 @@ def scpfiles():
     local("scp tools.py raffers:%s" % tools_file)
 
 
+def prod():
+    with cd(project_path):
+        run("echo export GIG_PRODUCTION=True >> postactivate")
+
+
 def installdeps():
     with settings(warn_only=True):
         with cd(project_path):
@@ -102,6 +107,7 @@ def new():
     clean()
     installdeps()
     scpfiles()
+    prod()
     start()
 
 

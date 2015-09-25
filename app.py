@@ -149,5 +149,8 @@ def create():
 
 
 if __name__ == "__main__":
-    app.run(debug=os.environ.get('GIG_DEBUG', True))
+    if os.environ.get('GIG_PRODUCTION'):
+        app.run(host='0.0.0.0', port=81, debug=os.environ.get('GIG_DEBUG', False))
+    else:
+        app.run(debug=os.environ.get('GIG_DEBUG', True))
 

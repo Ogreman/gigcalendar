@@ -25,7 +25,7 @@ def commit(words):
 
 
 def push(branch="master"):
-    local("git push %s %s" % env.hosts[0], branch)
+    local("git push %s %s" % (env.hosts[0], branch))
 
 
 def prepare():

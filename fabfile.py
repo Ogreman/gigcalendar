@@ -4,26 +4,18 @@ from fabric.api import local, settings, run, env, cd
 env.use_ssh_config = True
 env.hosts = ['raffers']
 postactivate = os.environ['VIRTUAL_ENV'] + '/bin/postactivate'
-
-
-with open(postactivate, 'r') as pa:
-    for line in pa:
-        try:
-            key, val = line.split('=')
-            key = key.split(' ')[1]
-            env[key] = val.replace('"', '').strip()
-        except (IndexError, ValueError):
-            pass
+project_path = os.environ['REMOTE_PROJECT_PATH']
+tools_file = "/usr/local/lib/python2.7/dist-packages/oauth2client/tools.py"
 
 
 def mkdirs():
-    run("mkdir -p %s" % env.REMOTE_PROJECT_PATH)
+    run("mkdir -p %s" % project_path)
 
 
 def start():
     with settings(warn_only=True):
-        with cd(env.REMOTE_PROJECT_PATH):
-            run('source postactivate && dtach -n `mktemp -u /tmp/dtach.XXXX` python %s/app.py' % env.REMOTE_PROJECT_PATH)
+        with cd(project_path):
+            run('source postactivate && dtach -n `mktemp -u /tmp/dtach.XXXX` python %s/app.py' % project_path)
 
 
 def commit(words):
@@ -37,7 +29,7 @@ def push(branch="master"):
 
 
 def prepare(branch="_dummy", stash=True):
-    with cd(env.REMOTE_PROJECT_PATH):
+    with cd(project_path):
         if stash:
             run("git stash")
         with settings(warn_only=True):
@@ -47,14 +39,14 @@ def prepare(branch="_dummy", stash=True):
 
 
 def finalise(branch="master", stash=True):
-    with cd(env.REMOTE_PROJECT_PATH):
+    with cd(project_path):
         run("git checkout %s" % branch)
         if stash:
             run("git stash pop")
 
 
 def clean(branch="_dummy"):
-    with cd(env.REMOTE_PROJECT_PATH):
+    with cd(project_path):
         with settings(warn_only=True):
             run("git branch -D %s" % branch)
 
@@ -71,30 +63,32 @@ def running():
 
 
 def logs():
-    with cd(env.REMOTE_PROJECT_PATH):
+    with cd(project_path):
         return run("tail gigs.log")
 
 
 def rmdirs(prompt=True):
     if not prompt:
-        run("rm -rf %s" % env.REMOTE_PROJECT_PATH)
+        run("rm -rf %s" % project_path)
         return
     if confirm("Delete everything?"):
-        run("rm -rf %s" % env.REMOTE_PROJECT_PATH)
+        run("rm -rf %s" % project_path)
 
 
 def initgit():
-    with cd(env.REMOTE_PROJECT_PATH):
+    with cd(project_path):
         run("git init")
 
 
-def scppa():
+def scpfiles():
     local("scp %s raffers:/home/james/projects/gig/" % postactivate)
+    local("scp client_secret.json raffers:/home/james/projects/gig/")
+    local("scp tools.py raffers:%s" % tools_file)
 
 
 def installdeps():
     with settings(warn_only=True):
-        with cd(env.REMOTE_PROJECT_PATH):
+        with cd(project_path):
             run("pip install -r requirements.txt")
 
 
@@ -106,8 +100,8 @@ def new():
     push()
     finalise(stash=False)
     clean()
-    scppa()
     installdeps()
+    scpfiles()
     start()
 
 

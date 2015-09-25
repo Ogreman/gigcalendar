@@ -27,11 +27,13 @@ def start():
 
 
 def commit(words):
-    local("git add -u && git commit -m '%s'" % words)
+    with settings(warn_only=True):
+        local("git add -u && git commit -m '%s'" % words)
 
 
 def push(branch="master"):
-    local("git push %s %s" % (env.hosts[0], branch))
+    with settings(warn_only=True):
+        local("git push %s %s" % (env.hosts[0], branch))
 
 
 def prepare(branch="_dummy", stash=True):

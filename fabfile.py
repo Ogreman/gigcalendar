@@ -1,9 +1,12 @@
+import os
 from fabric.api import local, settings, run, env, cd
 
 env.use_ssh_config = True
 env.hosts = ['raffers']
+postactivate = os.environ['VIRTUAL_ENV'] + '/bin/postactivate'
 
-with open('/home/james/.virtualenvs/gigcalendar/bin/postactivate', 'r') as pa:
+
+with open(postactivate, 'r') as pa:
     for line in pa:
         try:
             key, val = line.split('=')
@@ -53,6 +56,10 @@ def kill():
     for p in pid.split('\n'):
         if p:
             run("kill %d" % int(p))
+
+
+def running():
+    run("ps aux | grep gig | grep -v grep | awk '{print $2}'")
 
 
 def logs():
